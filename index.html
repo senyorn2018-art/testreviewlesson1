@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AIS 9 Level System</title>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+body{
+  background: linear-gradient(to bottom,#7ec8ff,#ffe066);
+  font-family:"Khmer OS Battambang", Arial;
+}
+.main-box{
+  background:#fff;
+  max-width:1100px;
+  margin:30px auto;
+  padding:25px;
+  border-radius:15px;
+ 
+}
+/*Logo */
+.main-box { background: white; max-width: 900px; margin: 40px auto; 
+    border-radius: 20px; padding: 30px; } 
+    .logo-title { text-align: center; margin-bottom: 20px; }
+     .logo-title h2 { font-weight: bold; margin-top: 10px; } 
+     .logo-title span { color: red; font-weight: bold; } 
+     .sub-title { text-align: center; font-weight: bold; margin: 20px 0; font-size: 18px; }
+.page-number{text-align:center;font-weight:bold;}
+tr:hover{background:#f1f1f1;cursor:pointer;}
+.level-btn.active{background:#007bff !important;color:#fff;}
+</style>
+</head>
+
+<body>
+
+<div class="main-box">
+<h3 class="text-center text-primary mb-3">AIS 9 Level Module System</h3>
+
+<!-- ✅ LEVEL BUTTONS -->
+<div class="text-center mb-3">
+  <button class="btn btn-outline-primary level-btn" data-level="Level 1">Level 1</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 2">Level 2</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 3">Level 3</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 4">Level 4</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 5">Level 5</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 6">Level 6</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 7">Level 7</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 8">Level 8</button>
+  <button class="btn btn-outline-primary level-btn" data-level="Level 9">Level 9</button>
+</div>
+
+<!-- ✅ FORM -->
+<div class="card p-3 mb-3">
+<div class="form-row">
+
+<select id="level" class="form-control col mr-2">
+<option value="">-- Level --</option>
+<option value="Level 1">Level 1</option>
+<option value="Level 2">Level 2</option>
+<option value="Level 3">Level 3</option>
+<option value="Level 4">Level 4</option>
+<option value="Level 5">Level 5</option>
+<option value="Level 6">Level 6</option>
+<option value="Level 7">Level 7</option>
+<option value="Level 8">Level 8</option>
+<option value="Level 9">Level 9</option>
+</select>
+
+<select id="module" class="form-control col mr-2">
+<option value="">-- Module --</option>
+<option value="Module1">Module1</option>
+<option value="Module2">Module2</option>
+<option value="Module3">Module3</option>
+<option value="Module4">Module4</option>
+<option value="Module5">Module5</option>
+</select>
+
+<select id="task" class="form-control col mr-2">
+<option value="">-- Task --</option>
+<option value="Task1">Task1</option>
+<option value="Task2">Task2</option>
+<option value="Task3">Task3</option>
+<option value="Task4">Task4</option>
+<option value="Task5">Task5</option>
+</select>
+<!--<select id="title" class="form-control col mr-2">
+<option value="">-- Task --</option>
+<option value="Dinosaurs and computers">Dinosaurs and computers
+</option>
+</select>-->
+
+<!--<textarea id="title" class="form-control col mr-2" placeholder="Title"></textarea>-->
+<!--add Option title-->
+<select id="title" class="form-control col mr-2">
+  <option value="">-- ជ្រើសរើស Title --</option>
+</select>
+
+
+<input id="page" class="form-control col" placeholder="Page">
+
+</div>
+
+<div class="text-center mt-3">
+<button id="add" class="btn btn-success">Add</button>
+<button id="update" class="btn btn-warning" disabled>Update</button>
+<button id="clear" class="btn btn-secondary">Clear</button>
+</div>
+</div>
+
+<!-- ✅ TABLE -->
+<!-- ✅ EXPORT AREA -->
+<div id="exportArea" style="padding:20px">
+
+  <!-- ✅ LOGO HEADER -->
+  <div class="logo-title mb-4" style="border:1px solid green; padding:20px 0px 0px 0px; border-radius:20px;">
+    <!--<h1><span style="color:green;">AIS</span></h1>
+    <h5>American <span>Intercon</span> School</h5>
+    <p>A Mengly J. Quach Education School</p>-->
+    <img id="logoPrint" src="logoais.png" width="400" crossorigin="anonymous">
+    <p style=" color:rgb(10, 161, 20)"><span >មេរៀនសម្រាប់មើលត្រៀមប្រឡង</span>
+     <select id="examType" style="border:green;text-align:center;" required>
+  <option value="">-- ជ្រើសរើសប្រភេទ --</option>
+  <option value="ប្រចាំខែ">ប្រចាំខែ</option>
+  <option value="ពាក់កណ្ដាលឆមាស១">ពាក់កណ្ដាលឆមាស១</option>
+  <option value="ឆមាស១">ឆមាស១</option>
+  <option value="ពាក់កណ្ដាលឆមាស២">ពាក់កណ្ដាលឆមាស២</option>
+  <option value="ឆមាស២">ឆមាស២</option>
+</select>
+<br>
+  <div class="">
+    <span class="" >កាលបរិច្ឆេទ​៖</span>
+  <input type="date" id="examDate"class="center" style="border:none;font-weight: bold;font-size:20;"/>
+</div>
+    </p>
+  </div>
+
+  <!-- ✅ TABLE -->
+  <table class="table table-bordered" id="dataTable">
+  <thead>
+    <tr>
+      <th>Level</th>
+      <th>Title</th>
+      <th>Page</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+  </table>
+
+</div>
+
+<!-- ✅ EXPORT -->
+<div class="text-center mt-3">
+<button onclick="if(validateExport()) exportExcel()" class="btn btn-info">Excel</button>
+<button onclick="if(validateExport()) exportPDF()" class="btn btn-danger">PDF</button>
+<button onclick="if(validateExport()) exportImage()" class="btn btn-primary">Photo</button>
+</div>
+
+</div>
+
+<script>
+let editIndex = null;
+let currentLevel = "";
+
+/* ✅ LEVEL BUTTON CLICK */
+$(".level-btn").click(function(){
+  $(".level-btn").removeClass("active");
+  $(this).addClass("active");
+
+  currentLevel = $(this).data("level");
+  $("#level").val(currentLevel); // Auto set in form
+  filterByLevel();
+});
+// Add Option title
+const titleByLevel = {
+
+  // ✅ LEVEL 1
+  "Level 1": [
+    "Dinosaurs and computers",
+    "They are everywhere",
+    "The computer",
+    "Click and type",
+    "My desktop",
+    "Start a program",
+    "Text and pictures",
+    "My workspace",
+    "Free drawing",
+    "Make shapes",
+    "Copy and paste",
+    "Save my picture",
+    "The Notepad",
+    "Letters and words",
+    "Move around",
+    "Select and change a word",
+    "The Internet",
+    "Communicate",
+    "Have fun",
+    "Learn"
+  ],
+
+  // ✅ LEVEL 2
+  "Level 2": [
+    "My computer","The desktop","Mouse and keyboard","My workspace",
+    "Start typing","Change the font","Insert pictures","Save and print",
+    "How to surf","The web page","Educational games","Copy from the web",
+    "My email","Send a message","Read and reply","Email rules",
+    "LOGO and the turtle","Move the turtle","Draw a shape","Let's have fun!"
+  ],
+
+  // ✅ LEVEL 3
+  "Level 3": [
+    "Store","Print","Capture","Interact","What is a files?",
+    "Organize my folder","Search and find","Start a program",
+    "Work with text","Give a title","Make a list","Check and save",
+    "Search for anything","Knowledge treasure sites","Be polite",
+    "Safety online","All about slide","Insert text",
+    "Insert picture","Presentation is cool"
+  ],
+
+  // ✅ LEVEL 4
+  "Level 4": [
+    "My desktop","Files and folders","Control panel","Protect my computer",
+    "Format a paragraph","Images - Advanced formatting",
+    "Spelling and grammar check","Print","Create a sound clip",
+    "View images and videos","Fix a photo","Apply photo effects",
+    "Transitions and animations","Set the timing",
+    "Insert a sound or video clip","Transfer data across apps",
+    "What is a spreadsheet?","Row - Column - Cell",
+    "Insert numbers and text","Simple calculations"
+  ],
+
+  // ✅ LEVEL 5
+  "Level 5": [
+    "Advanced formatting","Search and replace","Working with tables",
+    "Document views","Use capture devices",
+    "Create and edit a sound clip",
+    "Find and use multimedia material",
+    "Create an animated story","Internet and the web",
+    "Communication tools","Sharing your moments",
+    "Be secure online","Format a cell","Make calculations",
+    "Create a graph","Print a sheet","Gather data",
+    "Introduction to database","Create a database","Sort and print"
+  ],
+
+  // ✅ LEVEL 6
+  "Level 6": [
+    "Presentation graphics","Columns and tabs","Headers and footers",
+    "The final touch","What is a web page","Design a web page",
+    "Add more pages","Publishing the web page",
+    "More calculations","Functions","References","More charts",
+    "Structured information","Use a data entry form","Filter the data",
+    "Create a report","Introduction to programming",
+    "How to design a program","Variables and commands","More programming"
+  ],
+
+  // ✅ LEVEL 7
+  "Level 7": [
+    "Formatting text","Advanced font formatting","Images and graphics",
+    "Working with tables","Check and print","Project",
+    "Surfing the web","Use online resources","Send and receive email",
+    "Organizing email","Be safe online","Project",
+    "Rows and columns","Advanced formatting","Simple calculations",
+    "Logical functions","Create a chart","Project",
+    "Slides, text and images","Transitions and animations",
+    "Sound and video","Charts and graphs","Tips and tricks","Project"
+  ],
+
+  // ✅ LEVEL 8
+  "Level 8": [
+    "Tabs and columns","Headers and footers","HTML and PDF","Mail merge",
+    "Advanced topics","Project","Complex calculations","Functions",
+    "References","Advanced charts","Import and export data","Project",
+    "Introduction to databases","Filter and sort",
+    "Keys and relationships","Contact management",
+    "Lab data collection","Project","Design your website",
+    "Publish your website","Introduction to infographic design",
+    "Creating custom infographics","Science projects","Project"
+  ],
+
+  // ✅ LEVEL 9
+  "Level 9": [
+    "Data representation","Data manipulation","Computer architecture",
+    "Operating systems","Computer fundamentals","Computers in society",
+    "Project","Structured information","Data entry forms","Queries",
+    "Reports","Import and export data","Project",
+    "Networking basics","What is a blog?","Social Media",
+    "Communication tools","Digital citizenship","Project",
+    "Text documents","Spreadsheets","Presentations",
+    "Project 1 - Leaflet","Project 2 - Labels",
+    "Project 3 - Market research"
+  ]
+};
+
+const pageByTitle = {
+
+  // ================= LEVEL 1
+ // ================= LEVEL 1 ✅ FIXED
+"Dinosaurs and computers": "8",
+"They are everywhere": "10",
+"The computer": "12",
+"Click and type": "14",
+"My desktop": "22",
+"Start a program": "24",
+"Text and pictures": "26",
+"My workspace": "28",
+"Free drawing": "34",
+"Make shapes": "36",
+"Copy and paste": "42",
+"Save my picture": "44",
+"The Notepad": "48",
+"Letters and words": "50",
+"Move around": "54",
+"Select and change a word": "56",
+"The Internet": "62",
+"Communicate": "66",
+"Have fun": "68",
+"Learn": "70",
+
+  // ================= LEVEL 2
+  // ================= LEVEL 2 ✅ FIXED
+"My computer": "8",
+"The desktop": "14",
+"Mouse and keyboard": "18",
+"My workspace": "20",
+"Start typing": "24",
+"Change the font": "32",
+"Insert pictures": "36",
+"Save and print": "40",
+"How to surf": "44",
+"The web page": "46",
+"Educational games": "48",
+"Copy from the web": "50",
+"My email": "54",
+"Send a message": "56",
+"Read and reply": "60",
+"Email rules": "62",
+"LOGO and the turtle": "66",
+"Move the turtle": "68",
+"Draw a shape": "72",
+"Let's have fun!": "76",
+
+
+  // ================= LEVEL 3
+  "Store": "8",
+  "Print": "11",
+  "Capture": "14",
+  "Interact": "18",
+  "What is a files?": "27",
+  "Organize my folder": "31",
+  "Search and find": "35",
+  "Start a program": "38",
+  "Work with text": "45",
+  "Give a title": "48",
+  "Make a list": "50",
+  "Check and save": "52",
+  "Search for anything": "59",
+  "Knowledge treasure sites": "62",
+  "Be polite": "66",
+  "Safety online": "70",
+  "All about slide": "76",
+  "Insert text": "79",
+  "Insert picture": "84",
+  "Presentation is cool": "90",
+
+  // ================= LEVEL 4
+  "My desktop": "9",
+  "Files and folders": "12",
+  "Control panel": "18",
+  "Protect my computer": "22",
+  "Format a paragraph": "31",
+  "Images - Advanced formatting": "35",
+  "Spelling and grammar check": "38",
+  "Print_L4": "40",
+  "Create a sound clip": "46",
+  "View images and videos": "48",
+  "Fix a photo": "50",
+  "Apply photo effects": "53",
+  "Transitions and animations": "61",
+  "Set the timing": "64",
+  "Insert a sound or video clip": "66",
+  "Transfer data across apps": "70",
+  "What is a spreadsheet?": "76",
+  "Row - Column - Cell": "78",
+  "Insert numbers and text": "80",
+  "Simple calculations": "82",
+
+  // ================= LEVEL 5
+  "Advanced formatting": "9",
+  "Search and replace": "12",
+  "Working with tables": "15",
+  "Document views": "19",
+  "Use capture devices": "27",
+  "Create and edit a sound clip": "30",
+  "Find and use multimedia material": "33",
+  "Create an animated story": "36",
+  "Internet and the web": "47",
+  "Communication tools": "54",
+  "Sharing your moments": "62",
+  "Be secure online": "69",
+  "Format a cell": "79",
+  "Make calculations": "86",
+  "Create a graph": "92",
+  "Print a sheet": "94",
+  "Gather data": "102",
+  "Introduction to database": "104",
+  "Create a database": "106",
+  "Sort and print": "109",
+
+  // ================= LEVEL 6
+  "Presentation graphics": "9",
+  "Columns and tabs": "13",
+  "Headers and footers": "16",
+  "The final touch": "19",
+  "What is a web page": "26",
+  "Design a web page": "28",
+  "Add more pages": "32",
+  "Publishing the web page": "34",
+  "More calculations": "41",
+  "Functions": "45",
+  "References": "50",
+  "More charts": "54",
+  "Structured information": "61",
+  "Use a data entry form": "66",
+  "Filter the data": "72",
+  "Create a report": "77",
+  "Introduction to programming": "86",
+  "How to design a program": "90",
+  "Variables and commands": "92",
+  "More programming": "96",
+
+  // ================= LEVEL 7
+  "Formatting text": "7",
+  "Advanced font formatting": "14",
+  "Images and graphics": "18",
+  "Working with tables_L7": "22",
+  "Check and print": "27",
+  "Project_1_L7": "34",
+  "Surfing the web": "39",
+  "Use online resources": "47",
+  "Send and receive email": "52",
+  "Organizing email": "62",
+  "Be safe online": "68",
+  "Project_2_L7": "73",
+  "Rows and columns": "77",
+  "Advanced formatting_L7": "84",
+  "Simple calculations_L7": "88",
+  "Logical functions": "92",
+  "Create a chart_L7": "95",
+  "Project_3_L7": "98",
+  "Slides, text and images": "103",
+  "Transitions and animations_L7": "109",
+  "Sound and video": "112",
+  "Charts and graphs": "119",
+  "Tips and tricks": "122",
+  "Project_4_L7": "122",
+
+  // ================= LEVEL 8
+  "Tabs and columns": "7",
+  "Headers and footers_L8": "16",
+  "HTML and PDF": "21",
+  "Mail merge": "27",
+  "Advanced topics": "34",
+  "Project_1_L8": "38",
+  "Complex calculations": "43",
+  "Functions_L8": "46",
+  "References_L8": "56",
+  "Advanced charts": "60",
+  "Import and export data": "65",
+  "Project_2_L8": "70",
+  "Introduction to databases": "75",
+  "Filter and sort": "79",
+  "Keys and relationships": "82",
+  "Contact management": "87",
+  "Lab data collection": "91",
+  "Project_3_L8": "94",
+  "Design your website": "99",
+  "Publish your website": "106",
+  "Introduction to infographic design": "108",
+  "Creating custom infographics": "119",
+  "Science projects": "124",
+  "Project_4_L8": "128",
+
+  // ================= LEVEL 9
+  "Data representation": "6",
+  "Data manipulation": "7",
+  "Computer architecture": "14",
+  "Operating systems": "18",
+  "Computer fundamentals": "22",
+  "Computers in society": "28",
+  "Project_1_L9": "34",
+  "Structured information_L9": "36",
+  "Data entry forms": "41",
+  "Queries": "47",
+  "Reports_L9": "53",
+  "Import and export data_L9": "58",
+  "Project_2_L9": "64",
+  "Networking basics": "66",
+  "What is a blog?": "74",
+  "Social Media": "83",
+  "Communication tools_L9": "95",
+  "Digital citizenship": "101",
+  "Project_3_L9": "106",
+  "Text documents": "110",
+  "Spreadsheets": "123",
+  "Presentations": "130",
+  "Project 1 - Leaflet": "136",
+  "Project 2 - Labels": "138",
+  "Project 3 - Market research": "140"
+};
+$("#title").on("change", function(){
+  let title = $(this).val();
+  let page  = pageByTitle[title] || "";
+  $("#page").val(page);
+});
+
+
+// ✅ Auto Load Title when Level Change
+$("#level").on("change", function(){
+  let level = $(this).val();
+  loadTitleByLevel(level);
+});
+
+// ✅ Also Load when Click Level Button
+$(".level-btn").click(function(){
+  let level = $(this).data("level");
+  loadTitleByLevel(level);
+});
+
+function loadTitleByLevel(level){
+  let titleSelect = $("#title");
+  titleSelect.html('<option value="">-- ជ្រើសរើស Title --</option>');
+
+  if(titleByLevel[level]){
+    titleByLevel[level].forEach(title => {
+      titleSelect.append(
+        `<option value="${title}">${title}</option>`
+      );
+    });
+  }
+}
+
+/* ✅ ADD */
+$("#add").click(function(){
+
+ // ✅ FIX LEVEL FROM BUTTON
+ let level = currentLevel;  
+
+ let module=$("#module").val(),
+     task=$("#task").val(),
+     title=$("#title").val(),
+     page=$("#page").val();
+
+ if(!level){
+   alert("សូមជ្រើស Level ជាមុនសិន!");
+   return;
+ }
+
+ if(!module||!task||!title||!page){
+   alert("សូមបំពេញអោយគ្រប់!");
+   return;
+ }
+
+ let list = JSON.parse(localStorage.getItem("aisData")) || [];
+
+ list.push({
+   level: level,   // ✅ FIXED LEVEL
+   title: `${module}.${task} : ${title}`,
+   page: page
+ });
+
+ localStorage.setItem("aisData", JSON.stringify(list));
+
+ // ✅ Reload តាម Level
+ filterByLevel(); 
+ clearForm();
+});
+//clear form
+function clearForm(){
+  $("#module,#task,#title,#page").val("");  // ❌ មិន clear Level
+  $("#add").prop("disabled",false);
+  $("#update").prop("disabled",true);
+  editIndex = null;
+}
+
+
+/* ✅ LOAD ALL */
+function loadData(){
+ let list=JSON.parse(localStorage.getItem("aisData"))||[];
+ let html="";
+ list.forEach((d,i)=>{
+   html+=`
+   <tr onclick="editRow(${i})">
+     <td>${d.level}</td>
+     <td>${d.title}</td>
+     <td class="page-number">${d.page}</td>
+   </tr>`;
+ });
+ $("#dataTable tbody").html(html);
+}
+
+/* ✅ FILTER BY LEVEL */
+function filterByLevel(){
+ let list=JSON.parse(localStorage.getItem("aisData"))||[];
+ let html="";
+ list.forEach((d,i)=>{
+   if(d.level === currentLevel){
+     html+=`
+     <tr onclick="editRow(${i})">
+       <td>${d.level}</td>
+       <td>${d.title}</td>
+       <td class="page-number">${d.page}</td>
+     </tr>`;
+   }
+ });
+ $("#dataTable tbody").html(html);
+}
+
+/* ✅ EDIT */
+/*function editRow(i){
+ let list=JSON.parse(localStorage.getItem("aisData"));
+ $("#level").val(list[i].level);
+ $("#title").val(list[i].title);
+ $("#page").val(list[i].page);
+ editIndex=i;
+ $("#add").prop("disabled",true);
+ $("#update").prop("disabled",false);
+}*/
+//new edit row new fuction
+function editRow(i){
+  let list = JSON.parse(localStorage.getItem("aisData"));
+  let data = list[i];
+
+  $("#level").val(data.level);
+  loadTitleByLevel(data.level);
+
+  // ✅ Split Module.Task : Title
+  let parts = data.title.split(" : ");
+  let moduleTask = parts[0];   // M1.Task1
+  let realTitle  = parts[1];   // Title
+
+  let mt = moduleTask.split(".");
+  $("#module").val(mt[0]);     // M1
+  $("#task").val(mt[1]);       // Task1
+  $("#title").val(realTitle); // Title
+  $("#page").val(data.page);
+
+  editIndex = i;
+  $("#add").prop("disabled",true);
+  $("#update").prop("disabled",false);
+}
+
+
+
+/* ✅ UPDATE */
+$("#update").click(function(){
+
+  let list = JSON.parse(localStorage.getItem("aisData"));
+
+  let module = $("#module").val();
+  let task   = $("#task").val();
+  let title  = $("#title").val();
+  let page   = $("#page").val();
+
+  if(!module || !task || !title || !page){
+    alert("សូមបំពេញអោយគ្រប់");
+    return;
+  }
+
+  list[editIndex].title = `${module}.${task} : ${title}`;
+  list[editIndex].page  = page;
+
+  localStorage.setItem("aisData", JSON.stringify(list));
+
+  filterByLevel();
+  clearForm();
+});
+
+
+
+/* ✅ CLEAR */
+$("#clear").click(function(){
+
+  if(!currentLevel){
+    alert("សូមជ្រើស Level ជាមុនសិន!");
+    return;
+  }
+
+  if(!confirm("តើអ្នកពិតជាចង់លុប Data ទាំងអស់របស់ " + currentLevel + " មែនទេ?")){
+    return;
+  }
+
+  let list = JSON.parse(localStorage.getItem("aisData")) || [];
+
+  // ✅ លុបតែ data តាម Level
+  let newList = list.filter(d => d.level !== currentLevel);
+
+  localStorage.setItem("aisData", JSON.stringify(newList));
+
+  filterByLevel();   // Refresh Table តាម Level
+  clearForm();       // Clear Form
+});
+
+/* ✅ EXPORT */
+//full excel 
+/*function exportExcel(){
+
+  let list = JSON.parse(localStorage.getItem("aisData")) || [];
+
+  // ✅ Create Header like Logo Area
+  let wsData = [
+    ["AIS"],
+    ["American Intercon School"],
+    ["A Mengly J. Quach Education School"],
+    [""],
+    ["Level", "Title", "Page"]
+  ];
+
+  // ✅ Add table data
+  list.forEach(d => {
+    wsData.push([d.level, d.title, d.page]);
+  });
+
+  let ws = XLSX.utils.aoa_to_sheet(wsData);
+
+  // ✅ Create Workbook
+  let wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "AIS Data");
+
+  // ✅ Export
+  XLSX.writeFile(wb, "AIS_Full_Export.xlsx");
+}*/
+
+function exportExcel(){
+ let wb=XLSX.utils.table_to_book(document.getElementById("dataTable"));
+ XLSX.writeFile(wb,"AISReviewlesson.xlsx");
+}
+//function export pdf
+/*function exportPDF(){
+ const { jsPDF } = window.jspdf;
+ let doc=new jsPDF();
+ doc.autoTable({ html:"#dataTable" });
+ doc.save("AIS.pdf");
+}*/
+function exportPDF(){
+  const { jsPDF } = window.jspdf;
+
+  $("#logoPrint").hide();   // ✅ HIDE IMAGE
+
+  html2canvas(document.getElementById("exportArea"), {
+    scale: 3
+  }).then(canvas => {
+
+    let imgData = canvas.toDataURL("image/png");
+    let pdf = new jsPDF("p", "mm", "a4");
+
+    let pageWidth  = pdf.internal.pageSize.getWidth();
+    let imgHeight = canvas.height * pageWidth / canvas.width;
+
+    pdf.addImage(imgData, "PNG", 0, 0, pageWidth, imgHeight);
+    pdf.save("AIS_Full_Export.pdf");
+
+    $("#logoPrint").show();  // ✅ SHOW AGAIN
+  });
+}
+
+function exportImage(){
+
+  // ✅ Hide Logo before capture
+  $("#logoPrint").hide();
+
+  html2canvas(document.getElementById("exportArea"), {
+    scale: 3,
+    useCORS: true,
+    allowTaint: false
+  }).then(function(canvas){
+
+    let link = document.createElement("a");
+    link.download = "AIS_Table_Review_Lesson.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    // ✅ Show Logo again
+    $("#logoPrint").show();
+
+  }).catch(function(err){
+    alert("Export Photo Failed: " + err);
+    $("#logoPrint").show();
+  });
+}
+
+
+loadData();
+//validation export pdf
+function validateExport(){
+  let examType = $("#examType").val();
+  let examDate = $("#examDate").val();
+
+  if(!examType){
+    alert("សូមជ្រើសរើសប្រភេទសិន!");
+    return false;
+  }
+
+  if(!examDate){
+    alert("សូមជ្រើសរើសកាលបរិច្ឆេទសិន!");
+    return false;
+  }
+
+  return true;
+}
+
+</script>
+
+</body>
+</html>
