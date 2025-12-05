@@ -23,7 +23,6 @@ body{
   margin:30px auto;
   padding:25px;
   border-radius:15px;
- 
 }
 /*Logo */
 .main-box { background: white; max-width: 900px; margin: 40px auto; 
@@ -123,7 +122,11 @@ tr:hover{background:#f1f1f1;cursor:pointer;}
     <!--<h1><span style="color:green;">AIS</span></h1>
     <h5>American <span>Intercon</span> School</h5>
     <p>A Mengly J. Quach Education School</p>-->
-    <img id="logoPrint" src="logoais.png" width="400" crossorigin="anonymous">
+    <img id="logoPrint" width="400"
+          src="data:image/png;base64,
+          25QDQLTY+nlp0aCSnSeY0Vd2eihd9Jh28XyJQ+TvD6WLb4iIvt6jMVpcfQRDKJGf
+          JmACJjD6BP4/AAAA//8ZUM9CAAAABklEQVQDAETjxV4z7pUFAAAAAElFTkSuQmCC">
+
     <p style=" color:rgb(10, 161, 20)"><span >មេរៀនសម្រាប់មើលត្រៀមប្រឡង</span>
      <select id="examType" style="border:green;text-align:center;" required>
   <option value="">-- ជ្រើសរើសប្រភេទ --</option>
@@ -750,10 +753,9 @@ function exportExcel(){
 function exportPDF(){
   const { jsPDF } = window.jspdf;
 
-  $("#logoPrint").hide();   // ✅ HIDE IMAGE
-
   html2canvas(document.getElementById("exportArea"), {
-    scale: 3
+    scale: 3,
+    useCORS: true
   }).then(canvas => {
 
     let imgData = canvas.toDataURL("image/png");
@@ -764,16 +766,11 @@ function exportPDF(){
 
     pdf.addImage(imgData, "PNG", 0, 0, pageWidth, imgHeight);
     pdf.save("AIS_Full_Export.pdf");
-
-    $("#logoPrint").show();  // ✅ SHOW AGAIN
   });
 }
 
+
 function exportImage(){
-
-  // ✅ Hide Logo before capture
-  $("#logoPrint").hide();
-
   html2canvas(document.getElementById("exportArea"), {
     scale: 3,
     useCORS: true,
@@ -785,12 +782,8 @@ function exportImage(){
     link.href = canvas.toDataURL("image/png");
     link.click();
 
-    // ✅ Show Logo again
-    $("#logoPrint").show();
-
   }).catch(function(err){
     alert("Export Photo Failed: " + err);
-    $("#logoPrint").show();
   });
 }
 
